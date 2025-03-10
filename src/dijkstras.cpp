@@ -5,9 +5,15 @@
 using namespace std;
 using pairII = pair<int, int>;
 
+void error(string msg) {
+    cerr << msg;
+}
+
 struct compare_distance {
     bool operator()(const pair<int,int> p1, const pair<int, int> p2) {
-        return p1.second < p2.second;
+        return p1.second > p2.second;
+        //greater, so pq orders "largest" from left to right
+        //pq gets elements from right to left
     }
 };
 
@@ -46,19 +52,24 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
             }
         }
     }
+    return distances;
 }
 
 
 vector<int> extract_shortest_path(const vector<int>& distances, const vector<int>& previous, int destination) {
     int cur = destination;
-    vector<int> path = cur;
+    vector<int> path;
 
     while (cur != -1) {
-        path.insert(cur, 0);
+        path.insert(path.begin(), cur);
         cur = previous[cur];
     }
 
     return path;
 }
 
+void print_path(const vector<int>& v, int total) {
+    for (auto n : v)
+        cout << n << " ";
+}
 #endif
