@@ -5,18 +5,23 @@
 using namespace std;
 using pairII = pair<int, int>;
 
+struct compare_distance {
+    bool operator()(const pair<int,int> p1, const pair<int, int> p2) {
+        return p1.second < p2.second;
+    }
+};
 
-bool compare_distance(pair<int,int> p1, pair<int, int> p2) {
-    return p1.second < p2.second;
-}
+// bool compare_distance(const pair<int,int> p1, const pair<int, int> p2) {
+//    return p1.second < p2.second;
+// }
 
 vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& previous) {
     vector<int> distances(G.numVertices, INF);
     vector<bool> visited(G.numVertices, false);
-    bool (* compare) (pair<int, int> p1, pair<int, int> p2);
+    // bool (* compare) (pair<int, int> p1, pair<int, int> p2);
     
-    compare = compare_distance;
-    priority_queue<pairII, vector<pairII>, compare> pq;
+    //compare = compare_distance;
+    priority_queue<pairII, vector<pairII>, compare_distance> pq;
 
     pq.push(pair(source, 0));
     distances[source] = 0;
