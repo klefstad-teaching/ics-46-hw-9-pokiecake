@@ -35,3 +35,29 @@ TEST(Dijkstra, large) {
     EXPECT_EQ(shortestPaths[i], solutions[i]) << "path to " << i << " does not match" << endl;
   }
 }
+
+TEST(Ladder, is_adjacent) {
+  EXPECT_TRUE(is_adjacent("steel", "steal")) << "steel and steal should be adjacent" << endl;
+  EXPECT_TRUE(is_adjacent("backpack", "bakpack")) << "backpack and bakpack should be adjacent" << endl;
+  EXPECT_TRUE(is_adjacent("bakpack", "backpack")) << "bakpack and backpack should be adjacent" << endl;
+  EXPECT_TRUE(is_adjacent("absurd", "absurds")) << "absurd and absurds should be adjacent" << endl;
+
+  EXPECT_FALSE(is_adjacent("pat", "patty")) << "pat and patty should not be adjacent" << endl;
+  EXPECT_FALSE(is_adjacent("patty", "pat")) << "patty and pat should not be adjacent" << endl;
+  EXPECT_FALSE(is_adjacent("steal", "deal")) << "steal and deal should not be adjacent" << endl;
+  EXPECT_FALSE(is_adjacent("reed", "raad")) << "reed and raad should not be adjacent" << endl;
+}
+
+TEST(Ladder, generator) {
+  set<string> word_list;
+  load_words(word_list, "src/words.txt");
+  vector<string> ladder = generate_word_ladder("absurds", "absurd", word_list);
+  if (ladder.empty())
+    cout << "ladder is empty";
+  else 
+    print_word_ladder(ladder);
+}
+
+TEST(Ladder, verify_word_ladder) {
+  verify_word_ladder();
+}
