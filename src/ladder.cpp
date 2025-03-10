@@ -27,18 +27,71 @@ bool is_adjacent(const string& word1, const string& word2) {
                 --i; //stop the i pointer, let j increment -> skips char in word2
         }
     }
-    return difs == 1;
+    return difs <= 1;
+}
+
+void insert_map(string key, string word, map<string, vector<string>> & map) {
+    if (!map.contains(key))
+        map[key] = vector<string>();
+    map[key].push_back(word);
+}
+
+void create_key_map(map<string, vector<string>> & keys, const set<string> word_list) {
+    for (string word : word_list) {
+        keys[word] = vector<string>();
+        int length = word.size();
+        for (int i = 0; i < length; ++i) {
+            string key = word;
+            insert_map(key.replace(i, 1, "*"), word, keys);
+
+            string key2 = word;
+            insert_map(key.insert(i, "*"), word, keys);
+        }
+        keys[word].push_back(word + "*");
+    }
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
     //check for end_word in word list
+    if (!word_list.contains(end_word) || begin_word == end_word)
+        return vector<string>();
     
     queue<vector<string>> ladder_queue;
     ladder_queue.push({begin_word});
     set<string> visited;
     visited.insert(begin_word);
 
+    map<string, vector<string>> keys;
+    create_key_map(keys, word_list);
+    
+
     while (!ladder_queue.empty()) {
+        vector<string> ladder = ladder_queue.front();
+        ladder_queue.pop();
+        string last_word = *(ladder.end() - 1);
+        vector<string> patterns;
+        int length = last_word.length();
+        for (int i = 0; i < length; ++i) {
+            string pattern = last_word;
+            patterns.push_back(pattern.replace(i, 1, "*"));
+            pattern = last_word;
+            patterns.push_back(pattern.insert(i, "*"));
+        }
+        patterns.push_back(last_word + "*");
+
+        for (string p : patterns) {
+            vector<string> neighbors = keys[p];
+            for (string n : neighbors) {
+                visited.insert(n);
+                vector<string> new_ladder(ladder);
+                new_ladder.push_back(n);
+                if (n == end_word)
+                    return new_ladder;
+                ladder_queue.push(new_ladder);
+            }
+        }
+
+        /*
         vector<string> ladder = ladder_queue.front();
         ladder_queue.pop();
         string last_word = *(ladder.end() - 1);
@@ -51,7 +104,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                     return new_ladder;
                 ladder_queue.push(new_ladder);
             }
-        }
+        }*/
     }
 
     return vector<string>();
@@ -70,8 +123,14 @@ void load_words(set<string> & word_list, const string& file_name) {
 }
 
 void print_word_ladder(const vector<string>& ladder) {
-    for (auto word : ladder)
-        cout << word << " ";
+    if (ladder.empty())
+        cout << "No word ladder found." << endl;
+    else {
+        cout << "Word ladder found: ";
+        for (auto word : ladder)
+            cout << word << " ";
+        cout << endl;
+    }
 }
 
 #define my_assert(e) {cout << #e << ((e) ? " passed": " failed") << endl;}
