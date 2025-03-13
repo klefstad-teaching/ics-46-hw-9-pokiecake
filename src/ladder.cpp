@@ -8,7 +8,7 @@ void error(string word1, string word2, string msg) {
 }
 bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
     int length1 = str1.length(), length2 = str2.length();
-    if (abs(length1 - length2 > d))
+    if (abs(length1 - length2) > d)
         return false;
     int difs = 0;
     for (int i = 0, j = 0; i < length1 || j < length2; ++i, ++j) {
