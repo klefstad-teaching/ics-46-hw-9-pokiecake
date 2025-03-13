@@ -71,10 +71,10 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     queue<vector<string>> ladder_queue;
     ladder_queue.push({begin_word});
     set<string> visited;
-    visited.insert(begin_word);
     /*
     map<string, vector<string>> keys;
     create_key_map(keys, word_list);
+    set<string> visited_patterns
     */
     
     while (!ladder_queue.empty()) {
@@ -82,6 +82,8 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         vector<string> ladder = ladder_queue.front();
         ladder_queue.pop();
         string last_word = *(ladder.end() - 1);
+        if (visited.contains(last_word))
+            continue;
         vector<string> patterns;
         int length = last_word.length();
         for (int i = 0; i < length; ++i) {
@@ -93,6 +95,9 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         patterns.push_back(last_word + "*");
 
         for (string p : patterns) {
+            if (visited_patterns.contains(p))
+                continue;
+            visited_patterns.insert(p);
             vector<string> neighbors = keys[p];
             for (string n : neighbors) {
                 visited.insert(n);
@@ -108,9 +113,11 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         vector<string> ladder = ladder_queue.front();
         ladder_queue.pop();
         string last_word = *(ladder.end() - 1);
+        if (visited.contains(last_word))
+            continue;
+        visited.insert(last_word);
         for (string word : word_list) {
             if (is_adjacent(last_word, word)) {
-                visited.insert(word);
                 vector<string> new_ladder(ladder);
                 new_ladder.push_back(word);
                 if (word == end_word)
