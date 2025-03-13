@@ -51,7 +51,7 @@ TEST(Ladder, is_adjacent) {
 TEST(Ladder, generator) {
   set<string> word_list;
   load_words(word_list, "src/words.txt");
-  vector<string> ladder = generate_word_ladder("absurds", "absurd", word_list);
+  vector<string> ladder = generate_word_ladder("work", "play", word_list);
   if (ladder.empty())
     cout << "ladder is empty";
   else 
