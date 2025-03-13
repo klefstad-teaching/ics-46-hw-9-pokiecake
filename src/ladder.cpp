@@ -7,27 +7,39 @@ void error(string word1, string word2, string msg) {
     cerr << msg << ": " << word1 << " " << word2 << endl;
 }
 bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
-    return abs(int(str1.length() - str2.length())) <= d;
-}
-
-bool is_adjacent(const string& word1, const string& word2) {
-    if (!edit_distance_within(word1, word2, 1))
+    int length1 = str1.length(), length2 = str2.length();
+    if (abs(length1 - length2 > d))
         return false;
     int difs = 0;
-    int length1 = word1.length(), length2 = word2.length();
     for (int i = 0, j = 0; i < length1 || j < length2; ++i, ++j) {
         if (i >= length1 || j >= length2) {
             ++difs;
         }
-        else if (word1[i] != word2[j]) {
+        else if (str1[i] != str2[j]) {
             ++difs;
-            if (length1 > length2)
-                --j; //stop the j pointer and let i increment, skipping char in word1
-            else if (length2 > length1)
-                --i; //stop the i pointer, let j increment -> skips char in word2
+            if (length1 > length2) {
+                ++i;
+                while (i < length2 && str1[i] != str2[j]) {
+                    ++difs;
+                    ++i;
+                }
+            }
+            else if (length2 > length1) {
+                ++j;
+                while (j < length2 && str1[i] != str2[j]) {
+                    ++difs;
+                    ++j;
+                }
+            }
         }
+        if (difs > d)
+            return false;
     }
-    return difs <= 1;
+    return true;
+}
+
+bool is_adjacent(const string& word1, const string& word2) {
+    return edit_distance_within(word1, word2, 1);
 }
 
 void insert_map(string key, string word, map<string, vector<string>> & map) {
@@ -60,12 +72,13 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     ladder_queue.push({begin_word});
     set<string> visited;
     visited.insert(begin_word);
-
+    /*
     map<string, vector<string>> keys;
     create_key_map(keys, word_list);
+    */
     
-
     while (!ladder_queue.empty()) {
+        /*
         vector<string> ladder = ladder_queue.front();
         ladder_queue.pop();
         string last_word = *(ladder.end() - 1);
@@ -89,9 +102,9 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                     return new_ladder;
                 ladder_queue.push(new_ladder);
             }
-        }
+        }*/
 
-        /*
+        
         vector<string> ladder = ladder_queue.front();
         ladder_queue.pop();
         string last_word = *(ladder.end() - 1);
@@ -104,7 +117,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                     return new_ladder;
                 ladder_queue.push(new_ladder);
             }
-        }*/
+        }
     }
 
     return vector<string>();
